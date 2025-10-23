@@ -10,12 +10,45 @@ import Sushi from '../../assets/Sushi.png'
 const Home = () => {
     const restaurants = [
         {
+            image: Sushi,
+            title: 'Hioki Sushi',
+            rating: 4.9,
+            destaque: 'Destaque da semana',
+            category: 'Japonesa',
+            description:
+                'Peça já o melhor da culinária japonesa no conforto da sua casa! Sushis frescos, sashimis deliciosos e pratos quentes irresistíveis. Entrega rápida, embalagens cuidadosas e qualidade garantida.Experimente o Japão sem sair do lar com nosso delivery!'
+        },
+        {
             image: Macarrao,
             title: 'La Dolce Vita Trattoria',
             rating: 4.6,
             category: 'Italiana',
             description:
-                'A La Dolce Vita Trattoria leva a autêntica cozinha italiana até você! Desfrute de massas caseiras, pizzas deliciosas e risotos incríveis, tudo no conforto do seu lar.'
+                'A La Dolce Vita Trattoria leva a autêntica cozinha italiana até você! Desfrute de massas caseiras, pizzas deliciosas e risotos incríveis, tudo no conforto do seu lar. Entrega rápida, pratos bem embalados e sabor inesquecível. Peça já!'
+        },
+        {
+            image: Macarrao,
+            title: 'La Dolce Vita Trattoria',
+            rating: 4.6,
+            category: 'Italiana',
+            description:
+                'A La Dolce Vita Trattoria leva a autêntica cozinha italiana até você! Desfrute de massas caseiras, pizzas deliciosas e risotos incríveis, tudo no conforto do seu lar. Entrega rápida, pratos bem embalados e sabor inesquecível. Peça já!'
+        },
+        {
+            image: Macarrao,
+            title: 'La Dolce Vita Trattoria',
+            rating: 4.6,
+            category: 'Italiana',
+            description:
+                'A La Dolce Vita Trattoria leva a autêntica cozinha italiana até você! Desfrute de massas caseiras, pizzas deliciosas e risotos incríveis, tudo no conforto do seu lar. Entrega rápida, pratos bem embalados e sabor inesquecível. Peça já!'
+        },
+        {
+            image: Macarrao,
+            title: 'La Dolce Vita Trattoria',
+            rating: 4.6,
+            category: 'Italiana',
+            description:
+                'A La Dolce Vita Trattoria leva a autêntica cozinha italiana até você! Desfrute de massas caseiras, pizzas deliciosas e risotos incríveis, tudo no conforto do seu lar. Entrega rápida, pratos bem embalados e sabor inesquecível. Peça já!'
         },
         {
             image: Pizza,
@@ -23,40 +56,8 @@ const Home = () => {
             rating: 4.7,
             category: 'Italiana',
             description:
-                'Saboreie as melhores pizzas artesanais de São Paulo. Ingredientes frescos e entregas rápidas.'
+                'A La Dolce Vita Trattoria leva a autêntica cozinha italiana até você! Desfrute de massas caseiras, pizzas deliciosas e risotos incríveis, tudo no conforto do seu lar. Entrega rápida, pratos bem embalados e sabor inesquecível. Peça já!'
         },
-        {
-            image: Sushi,
-            title: 'Hioki Sushi',
-            rating: 4.9,
-            category: 'Japonesa',
-            description:
-                'Sushis frescos, sashimis deliciosos e pratos quentes irresistíveis. Entrega rápida e qualidade garantida.'
-        },
-        {
-            image: Macarrao,
-            title: 'Trattoria Bella Pasta',
-            rating: 4.5,
-            category: 'Italiana',
-            description:
-                'Massas artesanais preparadas diariamente. O verdadeiro sabor da Itália na sua mesa.'
-        },
-        {
-            image: Pizza,
-            title: 'Forno Romano',
-            rating: 4.8,
-            category: 'Italiana',
-            description:
-                'Pizzas napolitanas assadas no forno à lenha, feitas com ingredientes selecionados.'
-        },
-        {
-            image: Sushi,
-            title: 'Tokyo Lounge',
-            rating: 4.9,
-            category: 'Japonesa',
-            description:
-                'Experimente o melhor da gastronomia oriental moderna com pratos criativos e saborosos.'
-        }
     ]
 
     return (
@@ -69,6 +70,7 @@ const Home = () => {
                         image={item.image}
                         title={item.title}
                         rating={item.rating}
+                        destaque={item.destaque}
                         category={item.category}
                         description={item.description}
                     />

@@ -10,12 +10,13 @@ export const Container = styled.main`
 export const CardsContainer = styled.section`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 32px;
-  padding: 64px 16px;
+  gap: 32px 24px;
+  padding: 48px 16px 72px;
   width: 100%;
-  max-width: 1100px;
+  max-width: 1180px;
 
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     grid-template-columns: 1fr;
+    justify-items: center;
   }
 `

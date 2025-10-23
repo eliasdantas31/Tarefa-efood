@@ -1,3 +1,4 @@
+// src/components/Header/styles.ts
 import styled from 'styled-components'
 
 export const Container = styled.header`
@@ -26,15 +27,16 @@ export const Content = styled.div`
   color: #e66767;
 
   img {
-    width: 180px;
-    margin-bottom: 24px;
+    width: 125px;
+    height: 57.5px;
+    margin-bottom: 100px;
   }
 
   h1 {
-    font-size: 28px;
-    font-weight: bold;
-    max-width: 600px;
+    font-size: 36px;
+    font-weight: 900;
+    max-width: 780px;
     margin: 0 auto;
-    line-height: 1.3;
+    line-height: 1.25;
   }
 `

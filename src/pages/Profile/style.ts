@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import fundo from '../../assets/fundo.png'
 
 export const PageContainer = styled.main`
   background-color: #fff8f2;
@@ -8,101 +9,109 @@ export const PageContainer = styled.main`
 `
 
 /* ---------------- HEADER (TOP BAR) ---------------- */
+// src/pages/Profile/style.ts
 export const TopBar = styled.header`
-  background-color: #fff0f0;
-  display: flex;
-  justify-content: space-between;
+  height: 170px;
+  width: 100%;
+  padding: 0 450px;
+  background-image: url(${fundo});
+  background-size: cover;
+  background-position: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   align-items: center;
-  padding: 16px 60px;
   color: #e66767;
-  font-weight: bold;
-  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
 
   .link {
+    justify-self: start;
     cursor: pointer;
     transition: opacity 0.2s;
-    &:hover {
-      opacity: 0.8;
-    }
+    &:hover { opacity: 0.8; }
   }
 `
 
 export const Logo = styled.img`
-  width: 90px;
-  height: auto;
+  justify-self: center;
+  height: 57.5px;
+  width: 125px;
 `
-
 export const CartInfo = styled.div`
-  color: #e66767;
-  font-weight: 600;
-  strong {
-    color: #e66767;
-    margin-right: 4px;
-  }
+  justify-self: end;
+  strong { margin-right: 4px; }
 `
 
 /* ---------------- BANNER ---------------- */
 export const Banner = styled.div`
   position: relative;
   width: 100%;
-  height: 280px;
+  height: 320px;
   background-size: cover;
   background-position: center;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: 40px 80px;
+  padding: 48px 450px;
   color: #fff;
 
   &::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.4);
+    background: linear-gradient(180deg, rgba(0,0,0,0) 20%, rgba(0,0,0,0.45) 100%);
   }
-
-  > * {
-    position: relative;
-    z-index: 2;
-  }
+  > * { position: relative; z-index: 1; }
 `
 
 export const CategoryLabel = styled.span`
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 300;
   margin-bottom: 8px;
+  opacity: 0.95;
 `
 
 export const RestaurantTitle = styled.h1`
-  font-size: 36px;
+  font-size: 40px; 
   font-weight: 700;
   margin: 0;
+`
+
+/* ---------------- PRODUCTS CONTAINER ---------------- */
+
+export const ProductContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 40px;
 `
 
 /* ---------------- GRID ---------------- */
 export const ProductsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  padding: 60px 80px;
+  gap: 24px;
 
-  @media (max-width: 1024px) {
+  @media (max-width: 1200px) {
     grid-template-columns: repeat(2, 1fr);
     padding: 40px;
   }
-
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
     padding: 24px;
   }
 `
 
-export const ProductCard = styled.div`
+export const ProductCard = styled.article`
+  height: max-content;
+  width: 320px;
   background: #e66767;
-  border: 2px solid #e66767;
-  display: flex;
-  flex-direction: column;
-  color: #fff;
+  border: 1px solid #e66767;
+  display: grid;
+  grid-template-rows: 180px auto auto;
+  color: #FFEBD9;
+  padding: 7px;
 `
 
 export const ProductImage = styled.img`
@@ -112,43 +121,32 @@ export const ProductImage = styled.img`
 `
 
 export const ProductBody = styled.div`
-  padding: 16px;
+  margin: 12px 0;
   background: #e66767;
-  flex: 1;
 `
 
 export const ProductTitle = styled.h3`
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
-  margin: 0 0 8px;
+  margin: 0 0 6px;
 `
 
 export const ProductDescription = styled.p`
-  font-size: 14px;
-  line-height: 1.3;
-  color: #ffe9e9;
+  font-size: 12px;
+  line-height: 1.35;
+  color: #FFEBD9;
   margin: 0;
-`
-
-export const ProductActions = styled.div`
-  background: #ffe9e9;
-  color: #e66767;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 16px;
-  font-weight: 700;
+  min-height: 38px;
 `
 
 export const AddButton = styled.button`
-  background: transparent;
+  height: 24px;
+  width: 100%;
+  background-color: #FFEBD9;
   border: none;
   color: #e66767;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
-  transition: opacity 0.2s;
-
-  &:hover {
-    opacity: 0.8;
-  }
+  &:hover { opacity: 0.85; }
 `
