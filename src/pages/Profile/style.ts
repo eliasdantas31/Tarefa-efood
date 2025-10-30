@@ -9,7 +9,6 @@ export const PageContainer = styled.main`
 `
 
 /* ---------------- HEADER (TOP BAR) ---------------- */
-// src/pages/Profile/style.ts
 export const TopBar = styled.header`
   height: 170px;
   width: 100%;
@@ -84,7 +83,7 @@ export const ProductContainer = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  padding: 40px;
+  padding: 70px 26px 166px 26px;
 `
 
 /* ---------------- GRID ---------------- */

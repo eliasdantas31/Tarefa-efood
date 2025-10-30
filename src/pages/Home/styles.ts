@@ -12,7 +12,7 @@ export const CardsWrapper = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
-  padding: 40px 16px;
+  padding: 70px 26px 166px 26px;
   box-sizing: border-box;
 `
 
