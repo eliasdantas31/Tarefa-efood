@@ -1,3 +1,4 @@
+// src/components/Card/styles.ts
 import styled from 'styled-components'
 import star_img from '../../assets/star_favorite.png'
 

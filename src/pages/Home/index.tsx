@@ -1,87 +1,74 @@
+// src/pages/Home/index.tsx
 import Header from '../../components/Header'
 import Card from '../../components/Card'
 import Footer from '../../components/Footer'
-import { CardsWrapper, CardsGrid, PageContainer } from './styles'
+import { Container, CardsContainer } from './styles'
+import { useEffect, useState } from 'react'
 
-import Macarrao from '../../assets/Macarrao.png'
-import Pizza from '../../assets/Pizza.png'
-import Sushi from '../../assets/Sushi.png'
+type ApiRestaurant = {
+  id: number
+  titulo: string
+  tipo: string
+  avaliacao: number
+  destacado: boolean
+  descricao: string
+  capa: string
+}
+
+function normalizeImgUrl(url?: string): string {
+  const trimmed = (url || '').trim()
+  if (!trimmed) return ''
+  if (typeof window !== 'undefined' && window.location.protocol === 'https:' && trimmed.startsWith('http://')) {
+    return trimmed.replace('http://', 'https://')
+  }
+  return trimmed
+}
 
 const Home = () => {
-  const restaurants = [
-    {
-      image: Sushi,
-      title: 'Hioki Sushi',
-      rating: 4.9,
-      destaque: 'Destaque da semana',
-      category: 'Japonesa',
-      description:
-        'Peça já o melhor da culinária japonesa no conforto da sua casa! Sushis frescos, sashimis deliciosos e pratos quentes irresistíveis. Entrega rápida, embalagens cuidadosas e qualidade garantida.Experimente o Japão sem sair do lar com nosso delivery!'
-    },
-    {
-      image: Macarrao,
-      title: 'La Dolce Vita Trattoria',
-      rating: 4.6,
-      category: 'Italiana',
-      description:
-        'A La Dolce Vita Trattoria leva a autêntica cozinha italiana até você! Desfrute de massas caseiras, pizzas deliciosas e risotos incríveis, tudo no conforto do seu lar. Entrega rápida, pratos bem embalados e sabor inesquecível. Peça já!'
-    },
-    {
-      image: Macarrao,
-      title: 'La Dolce Vita Trattoria',
-      rating: 4.6,
-      category: 'Italiana',
-      description:
-        'A La Dolce Vita Trattoria leva a autêntica cozinha italiana até você! Desfrute de massas caseiras, pizzas deliciosas e risotos incríveis, tudo no conforto do seu lar. Entrega rápida, pratos bem embalados e sabor inesquecível. Peça já!'
-    },
-    {
-      image: Macarrao,
-      title: 'La Dolce Vita Trattoria',
-      rating: 4.6,
-      category: 'Italiana',
-      description:
-        'A La Dolce Vita Trattoria leva a autêntica cozinha italiana até você! Desfrute de massas caseiras, pizzas deliciosas e risotos incríveis, tudo no conforto do seu lar. Entrega rápida, pratos bem embalados e sabor inesquecível. Peça já!'
-    },
-    {
-      image: Macarrao,
-      title: 'La Dolce Vita Trattoria',
-      rating: 4.6,
-      category: 'Italiana',
-      description:
-        'A La Dolce Vita Trattoria leva a autêntica cozinha italiana até você! Desfrute de massas caseiras, pizzas deliciosas e risotos incríveis, tudo no conforto do seu lar. Entrega rápida, pratos bem embalados e sabor inesquecível. Peça já!'
-    },
-    {
-      image: Pizza,
-      title: 'Pizzaria Napoli',
-      rating: 4.7,
-      category: 'Italiana',
-      description:
-        'A La Dolce Vita Trattoria leva a autêntica cozinha italiana até você! Desfrute de massas caseiras, pizzas deliciosas e risotos incríveis, tudo no conforto do seu lar. Entrega rápida, pratos bem embalados e sabor inesquecível. Peça já!'
+  const [restaurants, setRestaurants] = useState<ApiRestaurant[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchRestaurants = async () => {
+      try {
+        setLoading(true)
+        const res = await fetch('https://api-ebac.vercel.app/api/efood/restaurantes', { cache: 'no-store' } as RequestInit)
+        if (!res.ok) throw new Error('Falha ao carregar restaurantes')
+        const data: ApiRestaurant[] = await res.json()
+        setRestaurants(data)
+        setError(null)
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : 'Erro inesperado'
+        setError(msg)
+      } finally {
+        setLoading(false)
+      }
     }
-  ]
+    fetchRestaurants()
+  }, [])
 
   return (
-    <PageContainer>
+    <Container>
       <Header />
+      <CardsContainer>
+        {loading && <p>Carregando...</p>}
+        {!loading && error && <p>{error}</p>}
 
-      <CardsWrapper>
-        <CardsGrid>
-          {restaurants.map((item) => (
-            <Card
-              key={item.title}
-              image={item.image}
-              title={item.title}
-              rating={item.rating}
-              destaque={item.destaque}
-              category={item.category}
-              description={item.description}
-            />
-          ))}
-        </CardsGrid>
-      </CardsWrapper>
-
+        {!loading && !error && restaurants.map((r) => (
+          <Card
+            key={r.id}
+            image={normalizeImgUrl(r.capa)}
+            title={r.titulo}
+            rating={r.avaliacao}
+            destaque={r.destacado ? 'Destaque da semana' : undefined}
+            category={r.tipo}
+            description={r.descricao}
+          />
+        ))}
+      </CardsContainer>
       <Footer />
-    </PageContainer>
+    </Container>
   )
 }
 

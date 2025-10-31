@@ -1,37 +1,26 @@
 // src/pages/Home/styles.ts
 import styled from 'styled-components'
 
-export const PageContainer = styled.main`
-  background-color: #fff8f2;
-  min-height: 100vh;
+export const Container = styled.main`
   display: flex;
   flex-direction: column;
-`
-
-export const CardsWrapper = styled.div`
+  align-items: center;
   width: 100%;
-  display: flex;
-  justify-content: center;
-  padding: 70px 26px 166px 26px;
-  box-sizing: border-box;
 `
 
-export const CardsGrid = styled.div`
+export const CardsContainer = styled.section`
   display: grid;
-  grid-template-columns: repeat(2, minmax(280px, 1fr));
-  gap: 24px;
-  justify-items: center;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px 24px;
+  padding: 48px 16px 72px;
   width: 100%;
-  max-width: 1024px;
-  margin: 0 auto;
+  max-width: 1180px;
+  margin-left: auto;
+  margin-right: auto;
+  justify-items: center;
 
-  @media (max-width: 1200px) {
+  @media (max-width: 1024px) {
     grid-template-columns: 1fr;
-    max-width: 720px;
-  }
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    max-width: 320px;
+    justify-items: center;
   }
 `

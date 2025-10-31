@@ -16,6 +16,7 @@ const Card: React.FC<CardProps> = ({ image, title, rating, destaque, category, d
   const navigate = useNavigate();
 
   function handleSaibaMais() {
+    // Mantém o comportamento original de navegação por state
     navigate('/perfil', {
       state: { image, title, rating, destaque, category, description }
     });

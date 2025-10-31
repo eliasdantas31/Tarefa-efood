@@ -1,3 +1,4 @@
+// src/pages/Profile/style.ts
 import styled from 'styled-components'
 import fundo from '../../assets/fundo.png'
 
@@ -76,14 +77,13 @@ export const RestaurantTitle = styled.h1`
 `
 
 /* ---------------- PRODUCTS CONTAINER ---------------- */
-
 export const ProductContainer = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  padding: 70px 26px 166px 26px;
+  padding: 40px;
 `
 
 /* ---------------- GRID ---------------- */
@@ -103,12 +103,13 @@ export const ProductsGrid = styled.div`
 `
 
 export const ProductCard = styled.article`
-  height: max-content;
+  height: 380px;
   width: 320px;
   background: #e66767;
   border: 1px solid #e66767;
-  display: grid;
-  grid-template-rows: 180px auto auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   color: #FFEBD9;
   padding: 7px;
 `
@@ -148,4 +149,116 @@ export const AddButton = styled.button`
   font-weight: 700;
   cursor: pointer;
   &:hover { opacity: 0.85; }
+`
+
+/* ---------------- MODAL ---------------- */
+export const ModalOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+`
+
+export const ModalContainer = styled.div`
+  height: max-content;
+  width: 100%;
+  max-width: 1024px;
+  background: #e66767;
+  color: #FFEBD9;
+  border: 1px solid #e66767;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 16px;
+  padding: 26px;
+  position: relative;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    max-height: 90vh;
+    overflow: auto;
+  }
+`
+
+export const ModalImage = styled.img`
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  background: #fff;
+`
+
+export const ModalContent = styled.div`
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 8px;
+`
+
+export const ModalTitle = styled.h2`
+  margin: 0;
+  margin-top: 20px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #FFEBD9;
+`
+
+export const ModalDescription = styled.p`
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #FFEBD9;
+`
+
+export const ModalActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+`
+
+export const ModalButtons = styled.div`
+  display: flex;
+  gap: 8px;
+
+  button {
+    height: 32px;
+    padding: 0 12px;
+    border: 1px solid #FFEBD9;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .primary {
+    background: #FFEBD9;
+    color: #e66767;
+  }
+
+  .secondary {
+    background: transparent;
+    color: #FFEBD9;
+  }
+`
+
+export const CloseButton = styled.button`
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 0;      
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 16px;       
+    height: 16px;
+    display: block;
+  }
+
+  &:hover { opacity: 0.85; }
+  &:focus { outline: 2px solid #FFEBD9; outline-offset: 2px; }
 `
