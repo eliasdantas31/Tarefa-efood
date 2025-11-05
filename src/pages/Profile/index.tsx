@@ -1,6 +1,6 @@
-// src/pages/Profile/index.tsx
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   PageContainer,
   TopBar,
@@ -29,36 +29,18 @@ import {
 } from './style'
 
 import LogoImg from '../../assets/logo.png'
-import CloseIcon from '../../assets/close button.png'
+import CloseIcon from '../../assets/close-button.png'
 import Footer from '../../components/Footer'
 import { formatBRL } from '../../utils/price'
 import type { JSX } from 'react/jsx-runtime'
+import type { ApiProduct, ApiRestaurant } from '../../types/api'
+import { addToCart, selectItems } from '../../store/slices/cartSlice'
 
 type LocationState = {
   restaurantId?: number
   image?: string
   title?: string
   category?: string
-}
-
-type ApiProduct = {
-  id: number
-  foto: string
-  nome: string
-  descricao: string
-  porcao?: string
-  preco: number
-}
-
-type ApiRestaurant = {
-  id: number
-  titulo: string
-  destacado: boolean
-  tipo: string
-  avaliacao: number
-  descricao: string
-  capa: string
-  cardapio: ApiProduct[]
 }
 
 function normalizeImgUrl(url?: string): string {
@@ -75,7 +57,10 @@ export default function Profile(): JSX.Element {
   const navigate = useNavigate()
   const state = (location.state || {}) as LocationState
 
-  const [cartCount, setCartCount] = useState(0)
+  const dispatch = useDispatch()
+  const cartItems = useSelector(selectItems)
+  const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0)
+
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [restaurant, setRestaurant] = useState<ApiRestaurant | null>(null)
@@ -95,7 +80,6 @@ export default function Profile(): JSX.Element {
         if (!res.ok) throw new Error('Falha ao buscar restaurantes')
         const data: ApiRestaurant[] = await res.json()
 
-        // Seleciona restaurante pelo id (preferência), título ou tipo vindo do state
         const byId = state.restaurantId
           ? data.find((r) => r.id === Number(state.restaurantId))
           : undefined
@@ -143,11 +127,6 @@ export default function Profile(): JSX.Element {
   const category = restaurant?.tipo ?? state.category ?? ''
   const products = useMemo(() => (restaurant?.cardapio ?? []).slice(0, 6), [restaurant])
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function addToCart(_prod: ApiProduct) {
-    setCartCount((prev) => prev + 1)
-  }
-
   function openModal(prod: ApiProduct, btn: HTMLButtonElement | null) {
     setSelected(prod)
     setModalOpen(true)
@@ -155,7 +134,7 @@ export default function Profile(): JSX.Element {
   }
 
   function confirmAdd() {
-    if (selected) addToCart(selected)
+    if (selected) dispatch(addToCart(selected))
     setModalOpen(false)
   }
 
