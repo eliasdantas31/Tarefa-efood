@@ -1,5 +1,12 @@
-// src/components/CartDrawer/styles.ts
+// src/components/CartDrawer/style.ts
 import styled from 'styled-components'
+
+export const Overlay = styled.div`
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 1100; /* fica abaixo do Drawer (1200) */
+`
 
 export const Drawer = styled.aside`
   position: fixed;
