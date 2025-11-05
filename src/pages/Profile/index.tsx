@@ -1,6 +1,7 @@
 // src/pages/Profile/index.tsx
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   PageContainer,
   TopBar,
@@ -33,6 +34,8 @@ import CloseIcon from '../../assets/close button.png'
 import Footer from '../../components/Footer'
 import { formatBRL } from '../../utils/price'
 import type { JSX } from 'react/jsx-runtime'
+import { addToCart, selectItems } from '../../store/slices/cartSlice'
+import CartDrawer from '../../components/CartDrawer'
 
 type LocationState = {
   restaurantId?: number
@@ -75,13 +78,18 @@ export default function Profile(): JSX.Element {
   const navigate = useNavigate()
   const state = (location.state || {}) as LocationState
 
-  const [cartCount, setCartCount] = useState(0)
+  const dispatch = useDispatch()
+  const cartItems = useSelector(selectItems)
+  const cartCount = cartItems.reduce((acc, i) => acc + i.quantity, 0)
+
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [restaurant, setRestaurant] = useState<ApiRestaurant | null>(null)
 
   const [modalOpen, setModalOpen] = useState(false)
+  const [drawerOpen, setDrawerOpen] = useState(false)
   const [selected, setSelected] = useState<ApiProduct | null>(null)
+  const [modalImageSrc, setModalImageSrc] = useState<string | null>(null)
   const openButtonRef = useRef<HTMLButtonElement | null>(null)
   const closeButtonRef = useRef<HTMLButtonElement | null>(null)
 
@@ -95,7 +103,6 @@ export default function Profile(): JSX.Element {
         if (!res.ok) throw new Error('Falha ao buscar restaurantes')
         const data: ApiRestaurant[] = await res.json()
 
-        // Seleciona restaurante pelo id (preferência), título ou tipo vindo do state
         const byId = state.restaurantId
           ? data.find((r) => r.id === Number(state.restaurantId))
           : undefined
@@ -122,7 +129,10 @@ export default function Profile(): JSX.Element {
 
   useEffect(() => {
     const onEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setModalOpen(false)
+      if (e.key === 'Escape') {
+        setModalOpen(false)
+        setDrawerOpen(false)
+      }
     }
     window.addEventListener('keydown', onEsc)
     return () => window.removeEventListener('keydown', onEsc)
@@ -135,6 +145,7 @@ export default function Profile(): JSX.Element {
     } else {
       document.body.style.overflow = ''
       openButtonRef.current?.focus()
+      setModalImageSrc(null)
     }
   }, [modalOpen])
 
@@ -143,19 +154,31 @@ export default function Profile(): JSX.Element {
   const category = restaurant?.tipo ?? state.category ?? ''
   const products = useMemo(() => (restaurant?.cardapio ?? []).slice(0, 6), [restaurant])
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function addToCart(_prod: ApiProduct) {
-    setCartCount((prev) => prev + 1)
-  }
-
   function openModal(prod: ApiProduct, btn: HTMLButtonElement | null) {
     setSelected(prod)
     setModalOpen(true)
     openButtonRef.current = btn
+    try {
+      const imgEl = document.querySelector(`img[data-prod-id="${prod.id}"]`) as HTMLImageElement | null
+      const src = imgEl?.src || normalizeImgUrl(prod.foto)
+      setModalImageSrc(src)
+    } catch {
+      setModalImageSrc(normalizeImgUrl(prod.foto))
+    }
   }
 
   function confirmAdd() {
-    if (selected) addToCart(selected)
+    if (selected) {
+      dispatch(addToCart({
+        id: selected.id,
+        foto: selected.foto,
+        nome: selected.nome,
+        descricao: selected.descricao,
+        porcao: selected.porcao,
+        preco: selected.preco
+      }))
+      setDrawerOpen(true)
+    }
     setModalOpen(false)
   }
 
@@ -165,7 +188,15 @@ export default function Profile(): JSX.Element {
         <TopBar>
           <span className="link" onClick={() => navigate('/')}>Restaurantes</span>
           <Logo src={LogoImg} alt="Logo efood" onClick={() => navigate('/')} style={{ cursor: 'pointer' }} />
-          <CartInfo><strong>{cartCount}</strong> produto(s) no carrinho</CartInfo>
+          <CartInfo
+            onClick={() => setDrawerOpen((v) => !v)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setDrawerOpen((v) => !v) }}
+            style={{ cursor: 'pointer' }}
+          >
+            <strong>{cartCount}</strong> produto(s) no carrinho
+          </CartInfo>
         </TopBar>
 
         <Banner style={{ backgroundImage: `url(${bannerImage})` }}>
@@ -191,6 +222,7 @@ export default function Profile(): JSX.Element {
             {!loading && !error && products.map((prod) => (
               <ProductCard key={prod.id}>
                 <ProductImage
+                  data-prod-id={prod.id}
                   src={normalizeImgUrl(prod.foto)}
                   alt={prod.nome}
                   loading="lazy"
@@ -233,12 +265,10 @@ export default function Profile(): JSX.Element {
             >
               <img src={CloseIcon} alt="Fechar" />
             </CloseButton>
-
             <ModalImage
-              src={normalizeImgUrl(selected.foto)}
+              src={modalImageSrc || normalizeImgUrl(selected.foto)}
               alt={selected.nome}
-              crossOrigin="anonymous"
-              loading="eager"
+              loading="lazy"
               onError={(e) => {
                 const img = e.currentTarget as HTMLImageElement
                 img.src =
@@ -273,6 +303,7 @@ export default function Profile(): JSX.Element {
           </ModalContainer>
         </ModalOverlay>
       )}
+      {drawerOpen && <CartDrawer onClose={() => setDrawerOpen(false)} />}
     </>
   )
 }
