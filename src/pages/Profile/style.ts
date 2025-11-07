@@ -31,6 +31,22 @@ export const TopBar = styled.header`
   }
 `
 
+export const TopBarContainer = styled.div`
+  height: 100%;
+  width: 1008px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  @media (max-width: 1200px) {
+    width: 664px;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+`
+
 export const Logo = styled.img`
   justify-self: center;
   height: 57.5px;
@@ -61,6 +77,22 @@ export const Banner = styled.div`
     background: linear-gradient(180deg, rgba(0,0,0,0) 20%, rgba(0,0,0,0.45) 100%);
   }
   > * { position: relative; z-index: 1; }
+`
+
+export const BannerContainer = styled.div`
+  height: 100%;
+  width: 1008px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+
+  @media (max-width: 1200px) {
+    width: 664px;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `
 
 export const CategoryLabel = styled.span`
