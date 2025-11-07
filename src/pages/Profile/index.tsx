@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import {
   PageContainer,
   TopBar,
+  TopBarContainer,
   Logo,
   CartInfo,
   Banner,
@@ -164,11 +165,11 @@ export default function Profile(): JSX.Element {
     <>
       <PageContainer>
         <TopBar>
-          <BannerContainer>
+          <TopBarContainer>
             <span className="link" onClick={() => navigate('/')}>Restaurantes</span>
             <Logo src={LogoImg} alt="Logo efood" onClick={() => navigate('/')} style={{ cursor: 'pointer' }} />
             <CartInfo><strong>{cartCount}</strong> produto(s) no carrinho</CartInfo>
-          </BannerContainer>
+          </TopBarContainer>
         </TopBar>
 
         <Banner style={{ backgroundImage: `url(${bannerImage})` }}>

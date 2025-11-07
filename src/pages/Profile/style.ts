@@ -31,6 +31,22 @@ export const TopBar = styled.header`
   }
 `
 
+export const TopBarContainer = styled.div`
+  height: 100%;
+  width: 1008px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  @media (max-width: 1200px) {
+    width: 664px;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+`
+
 export const Logo = styled.img`
   justify-self: center;
   height: 57.5px;
@@ -50,7 +66,8 @@ export const Banner = styled.div`
   background-position: center;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: center;
+  align-items: center;
   padding: 48px 450px;
   color: #fff;
 
