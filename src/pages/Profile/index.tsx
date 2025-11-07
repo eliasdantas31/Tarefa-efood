@@ -25,7 +25,8 @@ import {
   ModalDescription,
   ModalActions,
   ModalButtons,
-  CloseButton
+  CloseButton,
+  BannerContainer
 } from './style'
 
 import LogoImg from '../../assets/logo.png'
@@ -163,14 +164,18 @@ export default function Profile(): JSX.Element {
     <>
       <PageContainer>
         <TopBar>
-          <span className="link" onClick={() => navigate('/')}>Restaurantes</span>
-          <Logo src={LogoImg} alt="Logo efood" onClick={() => navigate('/')} style={{ cursor: 'pointer' }} />
-          <CartInfo><strong>{cartCount}</strong> produto(s) no carrinho</CartInfo>
+          <BannerContainer>
+            <span className="link" onClick={() => navigate('/')}>Restaurantes</span>
+            <Logo src={LogoImg} alt="Logo efood" onClick={() => navigate('/')} style={{ cursor: 'pointer' }} />
+            <CartInfo><strong>{cartCount}</strong> produto(s) no carrinho</CartInfo>
+          </BannerContainer>
         </TopBar>
 
         <Banner style={{ backgroundImage: `url(${bannerImage})` }}>
-          <CategoryLabel>{category}</CategoryLabel>
-          <RestaurantTitle>{title}</RestaurantTitle>
+          <BannerContainer>
+            <CategoryLabel>{category}</CategoryLabel>
+            <RestaurantTitle>{title}</RestaurantTitle>
+          </BannerContainer>
         </Banner>
 
         <ProductContainer>

@@ -63,6 +63,22 @@ export const Banner = styled.div`
   > * { position: relative; z-index: 1; }
 `
 
+export const BannerContainer = styled.div`
+  height: 100%;
+  width: 1008px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+
+  @media (max-width: 1200px) {
+    width: 664px;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+`
+
 export const CategoryLabel = styled.span`
   font-size: 20px;
   font-weight: 300;
