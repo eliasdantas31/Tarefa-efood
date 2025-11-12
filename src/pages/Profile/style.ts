@@ -13,22 +13,14 @@ export const PageContainer = styled.main`
 export const TopBar = styled.header`
   height: 170px;
   width: 100%;
-  padding: 0 450px;
   background-image: url(${fundo});
   background-size: cover;
   background-position: center;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  display: flex;
+  justify-content: center;
   align-items: center;
   color: #e66767;
   font-weight: 600;
-
-  .link {
-    justify-self: start;
-    cursor: pointer;
-    transition: opacity 0.2s;
-    &:hover { opacity: 0.8; }
-  }
 `
 
 export const TopBarContainer = styled.div`
@@ -37,6 +29,13 @@ export const TopBarContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  .link {
+    justify-self: start;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    &:hover { opacity: 0.8; }
+  }
 
   @media (max-width: 1200px) {
     width: 664px;
@@ -51,10 +50,13 @@ export const Logo = styled.img`
   justify-self: center;
   height: 57.5px;
   width: 125px;
+  cursor: pointer;
+  margin-left: 75px;
 `
 export const CartInfo = styled.div`
   justify-self: end;
   strong { margin-right: 4px; }
+  cursor: pointer;
 `
 
 /* ---------------- BANNER ---------------- */
@@ -66,7 +68,8 @@ export const Banner = styled.div`
   background-position: center;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: center;
+  align-items: center;
   padding: 48px 450px;
   color: #fff;
 
