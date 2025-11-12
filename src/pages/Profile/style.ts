@@ -35,6 +35,7 @@ export const TopBarContainer = styled.div`
   width: 1008px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 
   @media (max-width: 1200px) {
     width: 664px;
