@@ -70,14 +70,15 @@ export const Banner = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 48px 450px;
+  padding: 35px 450px;
   color: #fff;
 
   &::after {
+    height: 100%;
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgba(0,0,0,0) 20%, rgba(0,0,0,0.45) 100%);
+    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.45) 0%);
   }
   > * { position: relative; z-index: 1; }
 `
@@ -87,7 +88,7 @@ export const BannerContainer = styled.div`
   width: 1008px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: space-between;
 
   @media (max-width: 1200px) {
     width: 664px;
@@ -99,15 +100,17 @@ export const BannerContainer = styled.div`
 `
 
 export const CategoryLabel = styled.span`
-  font-size: 20px;
-  font-weight: 300;
+  font-size: 32px;
+  font-weight: 100;
+  line-height: 100%;
   margin-bottom: 8px;
   opacity: 0.95;
 `
 
 export const RestaurantTitle = styled.h1`
-  font-size: 40px; 
-  font-weight: 700;
+  font-size: 32px; 
+  font-weight: 900;
+  line-height: 100%;
   margin: 0;
 `
 
