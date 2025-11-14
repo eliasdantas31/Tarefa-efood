@@ -271,6 +271,7 @@ export const ModalButtons = styled.div`
     padding: 0 12px;
     border: 1px solid #FFEBD9;
     font-weight: 700;
+    font-size: 14px;
     cursor: pointer;
   }
 
