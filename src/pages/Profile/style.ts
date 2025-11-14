@@ -229,24 +229,31 @@ export const ModalImage = styled.img`
 `
 
 export const ModalContent = styled.div`
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  gap: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: #fff;
 `
 
 export const ModalTitle = styled.h2`
   margin: 0;
-  margin-top: 20px;
-  font-size: 20px;
-  font-weight: 700;
-  color: #FFEBD9;
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 100%;
 `
 
-export const ModalDescription = styled.p`
+export const ModalDescription = styled.div`
+  height: max-content;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+`
+
+export const ModalText = styled.p`
   margin: 0;
   font-size: 14px;
-  line-height: 1.4;
-  color: #FFEBD9;
+  line-height: 22px;
+  font-weight: 400;
 `
 
 export const ModalActions = styled.div`

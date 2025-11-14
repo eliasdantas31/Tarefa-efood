@@ -27,7 +27,8 @@ import {
   ModalActions,
   ModalButtons,
   CloseButton,
-  BannerContainer
+  BannerContainer,
+  ModalText
 } from './style'
 
 import LogoImg from '../../assets/logo.png'
@@ -264,8 +265,12 @@ export default function Profile(): JSX.Element {
             <ModalContent>
               <ModalTitle id="modal-title">{selected.nome}</ModalTitle>
               <ModalDescription id="modal-desc">
-                {selected.descricao}
-                {selected.porcao ? ` Serve: ${selected.porcao}` : null}
+                <ModalText>
+                  {selected.descricao}
+                </ModalText>
+                <ModalText>
+                  {selected.porcao ? ` Serve: ${selected.porcao}` : null}
+                </ModalText>
               </ModalDescription>
 
               <ModalActions>
