@@ -268,9 +268,10 @@ export const ModalButtons = styled.div`
   gap: 8px;
 
   button {
-    height: 32px;
+    height: 24px;
     padding: 0 12px;
     border: 1px solid #FFEBD9;
+    font-size: 14px;
     font-weight: 700;
     cursor: pointer;
   }
