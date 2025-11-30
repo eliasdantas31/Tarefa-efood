@@ -21,19 +21,18 @@ import type { RootState } from '../../store'
 
 type Props = {
   onClose?: () => void
+  onContinue?: () => void
 }
 
-export default function CartDrawer({ onClose }: Props) {
+export default function CartDrawer({ onClose, onContinue }: Props) {
   const dispatch = useDispatch()
   const items = useSelector((s: RootState) => selectItems(s))
   const total = useSelector((s: RootState) => selectTotal(s))
 
   return (
     <>
-      {/* overlay — clique aqui fecha o drawer chamando onClose (se fornecido) */}
       <Overlay onClick={() => onClose?.()} />
 
-      {/* mantém exatamente seu Drawer; adiciono stopPropagation para evitar fechar ao clicar dentro */}
       <Drawer role="dialog" aria-label="Carrinho" onClick={(e) => e.stopPropagation()}>
         {items.length === 0 ? (
           <Empty>
@@ -63,7 +62,7 @@ export default function CartDrawer({ onClose }: Props) {
               <span>Valor total</span>
               <span>{formatBRL(total)}</span>
             </TotalRow>
-            <ContinueBtn onClick={() => alert('Continuar com a entrega')}>
+            <ContinueBtn onClick={() => onContinue?.()}>
               Continuar com a entrega
             </ContinueBtn>
           </>

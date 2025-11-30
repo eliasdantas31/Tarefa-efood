@@ -29,7 +29,17 @@ import {
   CloseButton,
   BannerContainer,
   TopBarContainer,
-  ModalText
+  ModalText,
+  CheckoutOverlay,
+  CheckoutDrawer,
+  CheckoutTitle,
+  CheckoutForm,
+  CheckoutFormGroup,
+  CheckoutLabel,
+  CheckoutInput,
+  CheckoutInputRow,
+  CheckoutButton,
+  ConfirmationText
 } from './style'
 
 import LogoImg from '../../assets/logo.png'
@@ -37,7 +47,8 @@ import CloseIcon from '../../assets/close button.png'
 import Footer from '../../components/Footer'
 import { formatBRL } from '../../utils/price'
 import type { JSX } from 'react/jsx-runtime'
-import { addToCart, selectItems } from '../../store/slices/cartSlice'
+import { addToCart, selectItems, selectTotal, clearCart } from '../../store/slices/cartSlice'
+import type { RootState } from '../../store'
 import CartDrawer from '../../components/CartDrawer'
 
 type LocationState = {
@@ -67,6 +78,8 @@ type ApiRestaurant = {
   cardapio: ApiProduct[]
 }
 
+type CheckoutStep = 'delivery' | 'payment' | 'confirmation'
+
 function normalizeImgUrl(url?: string): string {
   const trimmed = (url || '').trim()
   if (!trimmed) return ''
@@ -82,7 +95,8 @@ export default function Profile(): JSX.Element {
   const state = (location.state || {}) as LocationState
 
   const dispatch = useDispatch()
-  const cartItems = useSelector(selectItems)
+  const cartItems = useSelector((s: RootState) => selectItems(s))
+  const total = useSelector((s: RootState) => selectTotal(s))
   const cartCount = cartItems.reduce((acc, i) => acc + i.quantity, 0)
 
   const [loading, setLoading] = useState(true)
@@ -95,6 +109,31 @@ export default function Profile(): JSX.Element {
   const [modalImageSrc, setModalImageSrc] = useState<string | null>(null)
   const openButtonRef = useRef<HTMLButtonElement | null>(null)
   const closeButtonRef = useRef<HTMLButtonElement | null>(null)
+
+  // Estados do checkout
+  const [checkoutOpen, setCheckoutOpen] = useState(false)
+  const [checkoutStep, setCheckoutStep] = useState<CheckoutStep>('delivery')
+
+  const [deliveryForm, setDeliveryForm] = useState({
+    receiver: '',
+    address: '',
+    city: '',
+    zipCode: '',
+    number: '',
+    complement: ''
+  })
+
+  const [paymentForm, setPaymentForm] = useState({
+    cardName: '',
+    cardNumber: '',
+    cardCode: '',
+    expiresMonth: '',
+    expiresYear: ''
+  })
+
+  const [loadingPayment, setLoadingPayment] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [orderData, setOrderData] = useState<any | null>(null)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -135,6 +174,7 @@ export default function Profile(): JSX.Element {
       if (e.key === 'Escape') {
         setModalOpen(false)
         setDrawerOpen(false)
+        setCheckoutOpen(false)
       }
     }
     window.addEventListener('keydown', onEsc)
@@ -183,6 +223,71 @@ export default function Profile(): JSX.Element {
       setDrawerOpen(true)
     }
     setModalOpen(false)
+  }
+
+  // Abrir checkout
+  function openCheckout() {
+    setDrawerOpen(false)
+    setCheckoutOpen(true)
+    setCheckoutStep('delivery')
+  }
+
+  // Finalizar pagamento
+  const handleFinishPayment = async () => {
+    try {
+      setLoadingPayment(true)
+
+      const payload = {
+        products: cartItems.map((item) => ({
+          id: item.id,
+          price: item.preco
+        })),
+        delivery: {
+          receiver: deliveryForm.receiver,
+          address: {
+            description: deliveryForm.address,
+            city: deliveryForm.city,
+            zipCode: deliveryForm.zipCode,
+            number: Number(deliveryForm.number),
+            complement: deliveryForm.complement
+          }
+        },
+        payment: {
+          card: {
+            name: paymentForm.cardName,
+            number: paymentForm.cardNumber,
+            code: Number(paymentForm.cardCode),
+            expires: {
+              month: Number(paymentForm.expiresMonth),
+              year: Number(paymentForm.expiresYear)
+            }
+          }
+        }
+      }
+
+      const response = await fetch(
+        'https://api-ebac.vercel.app/api/efood/checkout',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error('Erro ao processar pagamento')
+      }
+
+      const data = await response.json()
+      setOrderData(data)
+      setCheckoutStep('confirmation')
+      dispatch(clearCart())
+    } catch (e) {
+      console.error(e)
+      alert('Erro ao processar pagamento. Tente novamente.')
+    } finally {
+      setLoadingPayment(false)
+    }
   }
 
   return (
@@ -314,7 +419,238 @@ export default function Profile(): JSX.Element {
           </ModalContainer>
         </ModalOverlay>
       )}
-      {drawerOpen && <CartDrawer onClose={() => setDrawerOpen(false)} />}
+
+      {drawerOpen && <CartDrawer onClose={() => setDrawerOpen(false)} onContinue={openCheckout} />}
+
+      {/* CHECKOUT DRAWER */}
+      {checkoutOpen && (
+        <>
+          <CheckoutOverlay onClick={() => setCheckoutOpen(false)} />
+          <CheckoutDrawer onClick={(e) => e.stopPropagation()}>
+            
+            {/* ETAPA 1: ENTREGA */}
+            {checkoutStep === 'delivery' && (
+              <>
+                <CheckoutTitle>Entrega</CheckoutTitle>
+                <CheckoutForm>
+                  <CheckoutFormGroup>
+                    <CheckoutLabel>Quem irá receber</CheckoutLabel>
+                    <CheckoutInput
+                      type="text"
+                      value={deliveryForm.receiver}
+                      onChange={(e) =>
+                        setDeliveryForm({ ...deliveryForm, receiver: e.target.value })
+                      }
+                    />
+                  </CheckoutFormGroup>
+
+                  <CheckoutFormGroup>
+                    <CheckoutLabel>Endereço</CheckoutLabel>
+                    <CheckoutInput
+                      type="text"
+                      value={deliveryForm.address}
+                      onChange={(e) =>
+                        setDeliveryForm({ ...deliveryForm, address: e.target.value })
+                      }
+                    />
+                  </CheckoutFormGroup>
+
+                  <CheckoutFormGroup>
+                    <CheckoutLabel>Cidade</CheckoutLabel>
+                    <CheckoutInput
+                      type="text"
+                      value={deliveryForm.city}
+                      onChange={(e) =>
+                        setDeliveryForm({ ...deliveryForm, city: e.target.value })
+                      }
+                    />
+                  </CheckoutFormGroup>
+
+                  <CheckoutInputRow>
+                    <CheckoutFormGroup>
+                      <CheckoutLabel>CEP</CheckoutLabel>
+                      <CheckoutInput
+                        type="text"
+                        value={deliveryForm.zipCode}
+                        onChange={(e) =>
+                          setDeliveryForm({ ...deliveryForm, zipCode: e.target.value })
+                        }
+                      />
+                    </CheckoutFormGroup>
+
+                    <CheckoutFormGroup>
+                      <CheckoutLabel>Número</CheckoutLabel>
+                      <CheckoutInput
+                        type="text"
+                        value={deliveryForm.number}
+                        onChange={(e) =>
+                          setDeliveryForm({ ...deliveryForm, number: e.target.value })
+                        }
+                      />
+                    </CheckoutFormGroup>
+                  </CheckoutInputRow>
+
+                  <CheckoutFormGroup>
+                    <CheckoutLabel>Complemento (opcional)</CheckoutLabel>
+                    <CheckoutInput
+                      type="text"
+                      value={deliveryForm.complement}
+                      onChange={(e) =>
+                        setDeliveryForm({ ...deliveryForm, complement: e.target.value })
+                      }
+                    />
+                  </CheckoutFormGroup>
+
+                  <CheckoutButton
+                    type="button"
+                    onClick={() => setCheckoutStep('payment')}
+                  >
+                    Continuar com o pagamento
+                  </CheckoutButton>
+
+                  <CheckoutButton
+                    type="button"
+                    onClick={() => setCheckoutOpen(false)}
+                  >
+                    Voltar para o carrinho
+                  </CheckoutButton>
+                </CheckoutForm>
+              </>
+            )}
+
+            {/* ETAPA 2: PAGAMENTO */}
+            {checkoutStep === 'payment' && (
+              <>
+                <CheckoutTitle>
+                  Pagamento - Valor a pagar {formatBRL(total)}
+                </CheckoutTitle>
+                <CheckoutForm>
+                  <CheckoutFormGroup>
+                    <CheckoutLabel>Nome no cartão</CheckoutLabel>
+                    <CheckoutInput
+                      type="text"
+                      value={paymentForm.cardName}
+                      onChange={(e) =>
+                        setPaymentForm({ ...paymentForm, cardName: e.target.value })
+                      }
+                    />
+                  </CheckoutFormGroup>
+
+                  <CheckoutInputRow>
+                    <CheckoutFormGroup>
+                      <CheckoutLabel>Número do cartão</CheckoutLabel>
+                      <CheckoutInput
+                        type="text"
+                        maxLength={16}
+                        value={paymentForm.cardNumber}
+                        onChange={(e) =>
+                          setPaymentForm({ ...paymentForm, cardNumber: e.target.value })
+                        }
+                      />
+                    </CheckoutFormGroup>
+
+                    <CheckoutFormGroup>
+                      <CheckoutLabel>CVV</CheckoutLabel>
+                      <CheckoutInput
+                        type="text"
+                        maxLength={3}
+                        value={paymentForm.cardCode}
+                        onChange={(e) =>
+                          setPaymentForm({ ...paymentForm, cardCode: e.target.value })
+                        }
+                      />
+                    </CheckoutFormGroup>
+                  </CheckoutInputRow>
+
+                  <CheckoutInputRow>
+                    <CheckoutFormGroup>
+                      <CheckoutLabel>Mês de vencimento</CheckoutLabel>
+                      <CheckoutInput
+                        type="text"
+                        maxLength={2}
+                        placeholder="MM"
+                        value={paymentForm.expiresMonth}
+                        onChange={(e) =>
+                          setPaymentForm({ ...paymentForm, expiresMonth: e.target.value })
+                        }
+                      />
+                    </CheckoutFormGroup>
+
+                    <CheckoutFormGroup>
+                      <CheckoutLabel>Ano de vencimento</CheckoutLabel>
+                      <CheckoutInput
+                        type="text"
+                        maxLength={4}
+                        placeholder="AAAA"
+                        value={paymentForm.expiresYear}
+                        onChange={(e) =>
+                          setPaymentForm({ ...paymentForm, expiresYear: e.target.value })
+                        }
+                      />
+                    </CheckoutFormGroup>
+                  </CheckoutInputRow>
+
+                  <CheckoutButton
+                    type="button"
+                    disabled={loadingPayment}
+                    onClick={handleFinishPayment}
+                  >
+                    {loadingPayment ? 'Finalizando...' : 'Finalizar pagamento'}
+                  </CheckoutButton>
+
+                  <CheckoutButton
+                    type="button"
+                    disabled={loadingPayment}
+                    onClick={() => setCheckoutStep('delivery')}
+                  >
+                    Voltar para a edição de endereço
+                  </CheckoutButton>
+                </CheckoutForm>
+              </>
+            )}
+
+            {/* ETAPA 3: CONFIRMAÇÃO */}
+            {checkoutStep === 'confirmation' && orderData && (
+              <>
+                <CheckoutTitle>
+                  Pedido realizado - {orderData.orderId}
+                </CheckoutTitle>
+
+                <ConfirmationText>
+                  <p>
+                    Estamos felizes em informar que seu pedido já está em processo de
+                    preparação e, em breve, será entregue no endereço fornecido.
+                  </p>
+                  <p>
+                    Gostaríamos de ressaltar que nossos entregadores não estão
+                    autorizados a realizar cobranças extras.
+                  </p>
+                  <p>
+                    Lembre-se da importância de higienizar as mãos após o recebimento
+                    do pedido, garantindo assim sua segurança e bem-estar durante a
+                    refeição.
+                  </p>
+                  <p>
+                    Esperamos que desfrute de uma deliciosa e agradável experiência
+                    gastronômica. Bom apetite!
+                  </p>
+                </ConfirmationText>
+
+                <CheckoutButton
+                  type="button"
+                  onClick={() => {
+                    setCheckoutOpen(false)
+                    setCheckoutStep('delivery')
+                    setOrderData(null)
+                  }}
+                >
+                  Concluir
+                </CheckoutButton>
+              </>
+            )}
+          </CheckoutDrawer>
+        </>
+      )}
     </>
   )
 }

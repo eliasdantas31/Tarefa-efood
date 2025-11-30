@@ -308,3 +308,113 @@ export const CloseButton = styled.button`
   &:hover { opacity: 0.85; }
   &:focus { outline: 2px solid #FFEBD9; outline-offset: 2px; }
 `
+
+/* ---------------- CHECKOUT DRAWER ---------------- */
+export const CheckoutOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1100;
+`
+
+export const CheckoutDrawer = styled.aside`
+  position: fixed;
+  right: 0;
+  top: 0;
+  height: 100vh;
+  width: 360px;
+  max-width: 100%;
+  background: #e66767;
+  z-index: 1200;
+  padding: 8px 8px 16px 8px;  
+  display: flex;
+  flex-direction: column;
+  color: #ffebd9;
+  overflow-y: auto;
+`
+
+export const CheckoutTitle = styled.h2`
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffebd9;
+  margin-bottom: 16px;
+`
+
+export const CheckoutForm = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`
+
+export const CheckoutFormGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`
+
+export const CheckoutLabel = styled.label`
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffebd9;
+`
+
+export const CheckoutInput = styled.input`
+  width: 100%;               
+  box-sizing: border-box;    
+  height: 32px;
+  padding: 0 8px;
+  border: none;
+  background: #ffebd9;
+  color: #4b4b4b;
+  font-size: 14px;
+  font-weight: 700;
+
+  &::placeholder {
+    color: #4b4b4b;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`
+
+export const CheckoutInputRow = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;         
+  width: 100%;         
+  box-sizing: border-box;
+`
+
+export const CheckoutButton = styled.button`
+  height: 24px;
+  background: #ffebd9;
+  color: #e66767;
+  border: none;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 8px;
+
+  &:hover:not(:disabled) {
+    opacity: 0.9;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`
+
+export const ConfirmationText = styled.div`
+  margin-bottom: 16px;
+
+  p {
+    font-size: 14px;
+    color: #ffebd9;
+    margin-bottom: 22px;
+    line-height: 22px;
+    font-weight: 400;
+  }
+`
