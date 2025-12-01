@@ -301,8 +301,6 @@ export default function Profile(): JSX.Element {
   }
 
   const handleFinishPayment = async () => {
-    const { receiver, address, city, zipCode, number } = deliveryForm
-
     const deliveryValidation = canGoToPayment()
     if (!deliveryValidation.valid) {
       alert(deliveryValidation.message)
