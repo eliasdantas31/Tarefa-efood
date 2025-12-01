@@ -300,6 +300,7 @@ export default function Profile(): JSX.Element {
     return { valid: true, message: '' }
   }
 
+  // Finalizar pagamento
   const handleFinishPayment = async () => {
     const deliveryValidation = canGoToPayment()
     if (!deliveryValidation.valid) {
@@ -481,7 +482,7 @@ export default function Profile(): JSX.Element {
               <ModalTitle id="modal-title">{selected.nome}</ModalTitle>
               <ModalDescription id="modal-desc">
                 <ModalText>
-                    {selected.descricao}
+                  {selected.descricao}
                 </ModalText>
                 <ModalText>
                   {selected.porcao ? ` Serve: ${selected.porcao}` : null}
@@ -507,7 +508,7 @@ export default function Profile(): JSX.Element {
         <>
           <CheckoutOverlay onClick={() => setCheckoutOpen(false)} />
           <CheckoutDrawer onClick={(e) => e.stopPropagation()}>
-            
+
             {/* ETAPA 1: ENTREGA */}
             {checkoutStep === 'delivery' && (
               <>
