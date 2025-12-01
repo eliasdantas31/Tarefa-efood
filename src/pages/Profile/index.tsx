@@ -110,7 +110,6 @@ export default function Profile(): JSX.Element {
   const openButtonRef = useRef<HTMLButtonElement | null>(null)
   const closeButtonRef = useRef<HTMLButtonElement | null>(null)
 
-  // Estados do checkout
   const [checkoutOpen, setCheckoutOpen] = useState(false)
   const [checkoutStep, setCheckoutStep] = useState<CheckoutStep>('delivery')
 
@@ -225,15 +224,98 @@ export default function Profile(): JSX.Element {
     setModalOpen(false)
   }
 
-  // Abrir checkout
   function openCheckout() {
     setDrawerOpen(false)
     setCheckoutOpen(true)
     setCheckoutStep('delivery')
   }
 
-  // Finalizar pagamento
+  const canGoToPayment = () => {
+    const { receiver, address, city, zipCode, number } = deliveryForm
+
+    if (
+      receiver.trim() === '' ||
+      address.trim() === '' ||
+      city.trim() === '' ||
+      zipCode.trim() === '' ||
+      number.trim() === ''
+    ) {
+      return { valid: false, message: 'Preencha todos os campos obrigatórios de entrega.' }
+    }
+
+    if (zipCode.replace(/\D/g, '').length !== 8) {
+      return { valid: false, message: 'O CEP deve conter exatamente 8 dígitos.' }
+    }
+
+    return { valid: true, message: '' }
+  }
+
+  const handleGoToPayment = () => {
+    const validation = canGoToPayment()
+    if (!validation.valid) {
+      alert(validation.message)
+      return
+    }
+    setCheckoutStep('payment')
+  }
+
+  const validatePaymentForm = () => {
+    const { cardName, cardNumber, cardCode, expiresMonth, expiresYear } = paymentForm
+
+    if (
+      cardName.trim() === '' ||
+      cardNumber.trim() === '' ||
+      cardCode.trim() === '' ||
+      expiresMonth.trim() === '' ||
+      expiresYear.trim() === ''
+    ) {
+      return { valid: false, message: 'Preencha todos os campos obrigatórios de pagamento.' }
+    }
+
+    const nameParts = cardName.trim().split(/\s+/)
+    if (nameParts.length < 2) {
+      return { valid: false, message: 'O nome no cartão deve conter pelo menos nome e sobrenome.' }
+    }
+
+    const cardNumberDigits = cardNumber.replace(/\D/g, '')
+    if (cardNumberDigits.length < 13 || cardNumberDigits.length > 16) {
+      return { valid: false, message: 'O número do cartão deve conter entre 13 e 16 dígitos.' }
+    }
+
+    if (cardCode.replace(/\D/g, '').length !== 3) {
+      return { valid: false, message: 'O CVV deve conter exatamente 3 dígitos.' }
+    }
+
+    const month = parseInt(expiresMonth, 10)
+    if (isNaN(month) || month < 1 || month > 12) {
+      return { valid: false, message: 'O mês de vencimento deve estar entre 01 e 12.' }
+    }
+
+    const year = parseInt(expiresYear, 10)
+    const currentYear = new Date().getFullYear()
+    if (isNaN(year) || expiresYear.length !== 4 || year < currentYear) {
+      return { valid: false, message: `O ano de vencimento deve ter 4 dígitos e ser ${currentYear} ou posterior.` }
+    }
+
+    return { valid: true, message: '' }
+  }
+
   const handleFinishPayment = async () => {
+    const { receiver, address, city, zipCode, number } = deliveryForm
+
+    const deliveryValidation = canGoToPayment()
+    if (!deliveryValidation.valid) {
+      alert(deliveryValidation.message)
+      setCheckoutStep('delivery')
+      return
+    }
+
+    const paymentValidation = validatePaymentForm()
+    if (!paymentValidation.valid) {
+      alert(paymentValidation.message)
+      return
+    }
+
     try {
       setLoadingPayment(true)
 
@@ -434,7 +516,7 @@ export default function Profile(): JSX.Element {
                 <CheckoutTitle>Entrega</CheckoutTitle>
                 <CheckoutForm>
                   <CheckoutFormGroup>
-                    <CheckoutLabel>Quem irá receber</CheckoutLabel>
+                    <CheckoutLabel>Quem irá receber *</CheckoutLabel>
                     <CheckoutInput
                       type="text"
                       value={deliveryForm.receiver}
@@ -445,7 +527,7 @@ export default function Profile(): JSX.Element {
                   </CheckoutFormGroup>
 
                   <CheckoutFormGroup>
-                    <CheckoutLabel>Endereço</CheckoutLabel>
+                    <CheckoutLabel>Endereço *</CheckoutLabel>
                     <CheckoutInput
                       type="text"
                       value={deliveryForm.address}
@@ -456,7 +538,7 @@ export default function Profile(): JSX.Element {
                   </CheckoutFormGroup>
 
                   <CheckoutFormGroup>
-                    <CheckoutLabel>Cidade</CheckoutLabel>
+                    <CheckoutLabel>Cidade *</CheckoutLabel>
                     <CheckoutInput
                       type="text"
                       value={deliveryForm.city}
@@ -468,18 +550,20 @@ export default function Profile(): JSX.Element {
 
                   <CheckoutInputRow>
                     <CheckoutFormGroup>
-                      <CheckoutLabel>CEP</CheckoutLabel>
+                      <CheckoutLabel>CEP *</CheckoutLabel>
                       <CheckoutInput
                         type="text"
+                        maxLength={8}
                         value={deliveryForm.zipCode}
-                        onChange={(e) =>
-                          setDeliveryForm({ ...deliveryForm, zipCode: e.target.value })
-                        }
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/\D/g, '')
+                          setDeliveryForm({ ...deliveryForm, zipCode: value })
+                        }}
                       />
                     </CheckoutFormGroup>
 
                     <CheckoutFormGroup>
-                      <CheckoutLabel>Número</CheckoutLabel>
+                      <CheckoutLabel>Número *</CheckoutLabel>
                       <CheckoutInput
                         type="text"
                         value={deliveryForm.number}
@@ -503,7 +587,7 @@ export default function Profile(): JSX.Element {
 
                   <CheckoutButton
                     type="button"
-                    onClick={() => setCheckoutStep('payment')}
+                    onClick={handleGoToPayment}
                   >
                     Continuar com o pagamento
                   </CheckoutButton>
@@ -526,9 +610,10 @@ export default function Profile(): JSX.Element {
                 </CheckoutTitle>
                 <CheckoutForm>
                   <CheckoutFormGroup>
-                    <CheckoutLabel>Nome no cartão</CheckoutLabel>
+                    <CheckoutLabel>Nome no cartão *</CheckoutLabel>
                     <CheckoutInput
                       type="text"
+                      placeholder="Nome Sobrenome"
                       value={paymentForm.cardName}
                       onChange={(e) =>
                         setPaymentForm({ ...paymentForm, cardName: e.target.value })
@@ -538,54 +623,58 @@ export default function Profile(): JSX.Element {
 
                   <CheckoutInputRow>
                     <CheckoutFormGroup>
-                      <CheckoutLabel>Número do cartão</CheckoutLabel>
+                      <CheckoutLabel>Número do cartão *</CheckoutLabel>
                       <CheckoutInput
                         type="text"
                         maxLength={16}
                         value={paymentForm.cardNumber}
-                        onChange={(e) =>
-                          setPaymentForm({ ...paymentForm, cardNumber: e.target.value })
-                        }
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/\D/g, '')
+                          setPaymentForm({ ...paymentForm, cardNumber: value })
+                        }}
                       />
                     </CheckoutFormGroup>
 
                     <CheckoutFormGroup>
-                      <CheckoutLabel>CVV</CheckoutLabel>
+                      <CheckoutLabel>CVV *</CheckoutLabel>
                       <CheckoutInput
                         type="text"
                         maxLength={3}
                         value={paymentForm.cardCode}
-                        onChange={(e) =>
-                          setPaymentForm({ ...paymentForm, cardCode: e.target.value })
-                        }
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/\D/g, '')
+                          setPaymentForm({ ...paymentForm, cardCode: value })
+                        }}
                       />
                     </CheckoutFormGroup>
                   </CheckoutInputRow>
 
                   <CheckoutInputRow>
                     <CheckoutFormGroup>
-                      <CheckoutLabel>Mês de vencimento</CheckoutLabel>
+                      <CheckoutLabel>Mês de vencimento *</CheckoutLabel>
                       <CheckoutInput
                         type="text"
                         maxLength={2}
                         placeholder="MM"
                         value={paymentForm.expiresMonth}
-                        onChange={(e) =>
-                          setPaymentForm({ ...paymentForm, expiresMonth: e.target.value })
-                        }
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/\D/g, '')
+                          setPaymentForm({ ...paymentForm, expiresMonth: value })
+                        }}
                       />
                     </CheckoutFormGroup>
 
                     <CheckoutFormGroup>
-                      <CheckoutLabel>Ano de vencimento</CheckoutLabel>
+                      <CheckoutLabel>Ano de vencimento *</CheckoutLabel>
                       <CheckoutInput
                         type="text"
                         maxLength={4}
                         placeholder="AAAA"
                         value={paymentForm.expiresYear}
-                        onChange={(e) =>
-                          setPaymentForm({ ...paymentForm, expiresYear: e.target.value })
-                        }
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/\D/g, '')
+                          setPaymentForm({ ...paymentForm, expiresYear: value })
+                        }}
                       />
                     </CheckoutFormGroup>
                   </CheckoutInputRow>
